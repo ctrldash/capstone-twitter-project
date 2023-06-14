@@ -88,9 +88,7 @@ services:
       command: |
         "
         sleep 12;
-        kafka-topics --bootstrap-server kafka-1:9092 --create --if-not-exists --topic detect-lang --partitions 5;
-        kafka-topics --bootstrap-server kafka-1:9092 --create --if-not-exists --topic sentiment --partitions 5;
-        kafka-topics --bootstrap-server kafka-1:9092 --create --if-not-exists --topic ner --partitions 5;
+        kafka-topics --bootstrap-server kafka-1:9092 --create --if-not-exists --topic tweets-topic --partitions 5;
         "
 
   generator:

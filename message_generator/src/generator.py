@@ -6,7 +6,7 @@ import concurrent.futures
 
 
 def send(producer, message):
-    producer.produce('detect_lang', value=message)
+    producer.produce('tweets-topic', value=message)
     producer.flush()
 
 

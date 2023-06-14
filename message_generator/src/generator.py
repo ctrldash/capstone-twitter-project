@@ -23,7 +23,7 @@ def main(file_name):
 
         messages = list(df['text'])
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
 
             futures = []
             for msg in messages:

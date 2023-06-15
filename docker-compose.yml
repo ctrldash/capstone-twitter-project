@@ -97,3 +97,12 @@ services:
       kafka-init:
         condition: service_completed_successfully
     command: ["python", "./src/generator.py", "lang_tweets.csv"]
+
+  consumer-sentiment:
+    build: ./consumer_sentiment
+    depends_on:
+      kafka-init:
+        condition: service_completed_successfully
+    ports:
+      - "8000-8009:8000"
+    command: [ "python", "./src/main.py" ]

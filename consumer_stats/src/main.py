@@ -1,20 +1,24 @@
 import sys
-print(sys.path)
+import json
 import logging
+from collections import Counter
+
 from confluent_kafka import Consumer, KafkaException, KafkaError
 
 
 logger = logging.getLogger('consumer')
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 handler = logging.StreamHandler()
 handler.setFormatter(logging.Formatter('%(asctime)-15s %(levelname)-8s %(message)s'))
 logger.addHandler(handler)
 
 lang_counter = {}
 sentiment_counter = {}
+ner_counter = Counter()
 
 
 def msg_process(msg):
+    print(msg)
     message_value = str(msg.value())
     topic = str(msg.topic())
     logger.info(f"{message_value}    {topic}")
@@ -32,6 +36,12 @@ def msg_process(msg):
         else:
             sentiment_counter[message_value] = 1
         logger.info(sentiment_counter)
+
+    if topic == "ner-topic":
+        data = json.loads(msg.value())['entities']
+
+        ner_counter.update(data)
+        logger.info(f"Most common 10 NER: {ner_counter.most_common(10)}")
 
 
 def basic_consume_loop(consumer, topics):
@@ -67,9 +77,10 @@ if __name__ == '__main__':
     conf = {'bootstrap.servers': 'kafka-1:9092',
             'group.id': "language_group",
             'enable.auto.commit': False,
-            'auto.offset.reset': 'earliest'}
+            'auto.offset.reset': 'earliest',
+            }
 
     consumer = Consumer(conf)
     running = True
-    basic_consume_loop(consumer, ["languages-topic", "sentiment-topic"])
+    basic_consume_loop(consumer, ["languages-topic", "sentiment-topic", "ner-topic"])
     shutdown()

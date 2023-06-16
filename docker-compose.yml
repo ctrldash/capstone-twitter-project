@@ -91,6 +91,7 @@ services:
         kafka-topics --bootstrap-server kafka-1:9092 --create --if-not-exists --topic tweets-topic --partitions 5;
         kafka-topics --bootstrap-server kafka-1:9092 --create --if-not-exists --topic languages-topic --partitions 5;
         kafka-topics --bootstrap-server kafka-1:9092 --create --if-not-exists --topic sentiment-topic --partitions 5;
+        kafka-topics --bootstrap-server kafka-1:9092 --create --if-not-exists --topic ner-topic --partitions 5;
         "
 
   generator:
@@ -119,6 +120,14 @@ services:
   consumer-stats:
     build: ./consumer_stats
     container_name: consumer-stats
+    depends_on:
+      kafka-init:
+        condition: service_completed_successfully
+    command: [ "python", "./src/main.py" ]
+
+  consumer-ner:
+    build: ./consumer_ner
+    container_name: consumer-ner
     depends_on:
       kafka-init:
         condition: service_completed_successfully

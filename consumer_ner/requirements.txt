@@ -1,2 +1,3 @@
 confluent-kafka==2.1.1
-prometheus-client
+spacy==3.5.3
+spacy-langdetect

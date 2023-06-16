@@ -18,10 +18,9 @@ ner_counter = Counter()
 
 
 def msg_process(msg):
-    print(msg)
     message_value = str(msg.value())
     topic = str(msg.topic())
-    logger.info(f"{message_value}    {topic}")
+    logger.debug(f"{message_value}    {topic}")
 
     if topic == "languages-topic":
         if message_value in lang_counter:
@@ -41,7 +40,7 @@ def msg_process(msg):
         data = json.loads(msg.value())['entities']
 
         ner_counter.update(data)
-        logger.info(f"Most common 10 NER: {ner_counter.most_common(10)}")
+        logger.info(f"Most common 10 NER: {ner_counter.most_common(11)}")
 
 
 def basic_consume_loop(consumer, topics):

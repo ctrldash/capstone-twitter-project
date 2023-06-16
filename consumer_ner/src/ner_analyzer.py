@@ -22,14 +22,11 @@ class NerParser:
 
     def find(self, text):
         lang = detect(text)
-        # logger.debug(f"Detected lang: {lang}")
         if lang not in self.all_lang:
-            # logger.debug(f"Detected lang is not among available: {lang}")
             lang = "en"
         
         doc = self.nlp[lang](text)
         result = [str(w.text) for w in doc.ents if w.label_ not in self.filter_out]
-        # logger.debug(f"Found {len(result)} entities: {result}")
         if result:
             return {"entities": result}
         return {"entities": []}

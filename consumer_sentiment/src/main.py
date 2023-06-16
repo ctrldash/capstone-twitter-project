@@ -13,11 +13,9 @@ logger.addHandler(handler)
 
 
 def msg_process(msg, analyzer):
-    logger.info(msg.value())
-
     msg_sentiment = analyzer.run(str(msg.value()))
 
-    logger.info(msg_sentiment)
+    logger.info(f"{msg_sentiment}   {str(msg.value())}")
 
 
 def basic_consume_loop(consumer, topics):

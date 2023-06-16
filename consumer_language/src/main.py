@@ -13,16 +13,14 @@ logger.addHandler(handler)
 
 
 def msg_process(msg, analyzer):
-    logger.info(msg.value())
+    msg_language = analyzer.run(str(msg.value()))
 
-    msg_sentiment = analyzer.run(str(msg.value()))
-
-    logger.info(msg_sentiment)
+    logger.info(f"{msg_language}    {str(msg.value())}")
 
 
 def basic_consume_loop(consumer, topics):
     try:
-        sentiment_analysator = LanguageAnalysator()
+        language_analysator = LanguageAnalysator()
 
         consumer.subscribe(topics)
 
@@ -39,7 +37,7 @@ def basic_consume_loop(consumer, topics):
                 elif msg.error():
                     raise KafkaException(msg.error())
             else:
-                msg_process(msg, sentiment_analysator)
+                msg_process(msg, language_analysator)
     finally:
         # Close down consumer to commit final offsets.
         consumer.close()

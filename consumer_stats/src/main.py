@@ -2,8 +2,6 @@ import sys
 print(sys.path)
 import logging
 from confluent_kafka import Consumer, KafkaException, KafkaError
-from language_analysator import LanguageAnalysator
-from language_produce import LanguageProducer
 
 
 logger = logging.getLogger('consumer')
@@ -12,19 +10,32 @@ handler = logging.StreamHandler()
 handler.setFormatter(logging.Formatter('%(asctime)-15s %(levelname)-8s %(message)s'))
 logger.addHandler(handler)
 
+lang_counter = {}
+sentiment_counter = {}
 
-def msg_process(msg, analyzer, producer):
-    msg_language = analyzer.run(str(msg.value()))
 
-    #logger.info(f"{msg_language}    {str(msg.value())}")
+def msg_process(msg):
+    message_value = str(msg.value())
+    topic = str(msg.topic())
+    logger.info(f"{message_value}    {topic}")
 
-    producer.send("languages-topic", msg_language)
+    if topic == "languages-topic":
+        if message_value in lang_counter:
+            lang_counter[message_value] += 1
+        else:
+            lang_counter[message_value] = 1
+        logger.info(lang_counter)
+
+    if topic == "sentiment-topic":
+        if message_value in sentiment_counter:
+            sentiment_counter[message_value] += 1
+        else:
+            sentiment_counter[message_value] = 1
+        logger.info(sentiment_counter)
 
 
 def basic_consume_loop(consumer, topics):
     try:
-        language_analysator = LanguageAnalysator()
-        language_producer = LanguageProducer()
 
         consumer.subscribe(topics)
 
@@ -41,7 +52,7 @@ def basic_consume_loop(consumer, topics):
                 elif msg.error():
                     raise KafkaException(msg.error())
             else:
-                msg_process(msg, language_analysator, language_producer)
+                msg_process(msg)
     finally:
         # Close down consumer to commit final offsets.
         consumer.close()
@@ -60,5 +71,5 @@ if __name__ == '__main__':
 
     consumer = Consumer(conf)
     running = True
-    basic_consume_loop(consumer, ["tweets-topic"])
+    basic_consume_loop(consumer, ["languages-topic", "sentiment-topic"])
     shutdown()

@@ -3,6 +3,7 @@ print(sys.path)
 import logging
 from confluent_kafka import Consumer, KafkaException, KafkaError
 from sentiment_analysator import SentimentAnalysator
+from sentiment_produce import SentimentProducer
 
 
 logger = logging.getLogger('consumer')
@@ -12,15 +13,18 @@ handler.setFormatter(logging.Formatter('%(asctime)-15s %(levelname)-8s %(message
 logger.addHandler(handler)
 
 
-def msg_process(msg, analyzer):
+def msg_process(msg, analyzer, producer):
     msg_sentiment = analyzer.run(str(msg.value()))
 
-    logger.info(f"{msg_sentiment}   {str(msg.value())}")
+    #logger.info(f"{msg_sentiment}   {str(msg.value())}")
+
+    producer.send("sentiment-topic", msg_sentiment)
 
 
 def basic_consume_loop(consumer, topics):
     try:
         sentiment_analysator = SentimentAnalysator()
+        sentiment_producer = SentimentProducer()
 
         consumer.subscribe(topics)
 
@@ -37,7 +41,7 @@ def basic_consume_loop(consumer, topics):
                 elif msg.error():
                     raise KafkaException(msg.error())
             else:
-                msg_process(msg, sentiment_analysator)
+                msg_process(msg, sentiment_analysator, sentiment_producer)
     finally:
         # Close down consumer to commit final offsets.
         consumer.close()

@@ -1,28 +1,35 @@
-# capstone-twitter-project
-__name__ == "__main__"
+# Capstone project (Project B. E2E data processing pipeline - processing social media data (twitter))
 
-Goals: Learn about implementation of E2E data processing pipelines using kafka for processing social media data (twitter)
+Collaborators:
+ - Vadym Popyk
+ - Oleksii Zarembovskyi
+ - Daria But
 
-Instructions:
+1. We have chosen the Twitter dataset from [Kaggle](https://www.kaggle.com/datasets/crowdflower/twitter-airline-sentiment).
+2. Here is our kafka environment with 3 brokers - [docker-compose.yml](https://github.com/ctrldash/capstone-twitter-project/blob/c6e74a4b0cc11b4771116fd5c3b5d06b1b9b5f64/docker-compose.yml).
+3. Implemented message [generator microservice](https://github.com/ctrldash/capstone-twitter-project/blob/c6e74a4b0cc11b4771116fd5c3b5d06b1b9b5f64/message_generator).
+4. Implemented the [microservice](https://github.com/ctrldash/capstone-twitter-project/blob/c6e74a4b0cc11b4771116fd5c3b5d06b1b9b5f64/consumer_language) 
+that detects a language of a tweet.
+5. Implemented the [microservice](https://github.com/ctrldash/capstone-twitter-project/blob/c6e74a4b0cc11b4771116fd5c3b5d06b1b9b5f64/consumer_sentiment) 
+that recognizes sentiment class of a tweet.
+6. Implemented the [microservice](https://github.com/ctrldash/capstone-twitter-project/blob/c6e74a4b0cc11b4771116fd5c3b5d06b1b9b5f64/consumer_ner)
+that recognizes Named Entities (persons) a tweet.
+7. Implemented the [microservice](https://github.com/ctrldash/capstone-twitter-project/blob/c6e74a4b0cc11b4771116fd5c3b5d06b1b9b5f64/consumer_stats)
+that generates and displays statistics :
+   - list of languages with numbers of messages
+    
+    ![](./img/languages.png)
 
-Prepare a datatset - twitter dataset or a connector to twitter.
-Prepare a kafka environment.
-Implement a “generator” microservice that splits the dataset to messages, sends them to kafka as message or requests tweets from the twitter.
-Implement a microservice that detects a language of a tweet
-Implement a microservice that recognizes sentiment class of a tweet. List of sentiment classes: Negative, Positive
-Implement a microservice that recognizes Named Entities (persons) a tweet
-Implement a microservice that generates and displays statistics :
-               a) list of languages with numbers of messages
+    - number of messages among sentiment classes
+    
+    ![](./img/sentiment.png)
 
-               b) number of messages among sentiment classes
+   - top 10 Named Entities
+    
+    ![](./img/ner.png)
 
-               c) top 10 Named Entities
+To reproduce our results - clone the repository and run:
 
-
-
-A report should include:
-
-A link to a source code repository with the implementation of microservices
-Instructions on how to run the implementation
-Link to the dataset
-Statistics (p.7 in the Instructions)
+``
+docker compose up
+``

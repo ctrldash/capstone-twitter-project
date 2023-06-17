@@ -1,5 +1,4 @@
 import sys
-print(sys.path)
 import logging
 from confluent_kafka import Consumer, KafkaException, KafkaError
 from sentiment_analysator import SentimentAnalysator
@@ -15,8 +14,6 @@ logger.addHandler(handler)
 
 def msg_process(msg, analyzer, producer):
     msg_sentiment = analyzer.run(str(msg.value()))
-
-    #logger.info(f"{msg_sentiment}   {str(msg.value())}")
 
     producer.send("sentiment-topic", msg_sentiment)
 

@@ -12,28 +12,22 @@ handler = logging.StreamHandler()
 handler.setFormatter(logging.Formatter('%(asctime)-15s %(levelname)-8s %(message)s'))
 logger.addHandler(handler)
 
-lang_counter = {}
-sentiment_counter = {}
+lang_counter = Counter()
+sentiment_counter = Counter()
 ner_counter = Counter()
 
 
 def msg_process(msg):
-    message_value = str(msg.value())
+    message_value = msg.value().decode('utf-8')
     topic = str(msg.topic())
     logger.debug(f"{message_value}    {topic}")
 
     if topic == "languages-topic":
-        if message_value in lang_counter:
-            lang_counter[message_value] += 1
-        else:
-            lang_counter[message_value] = 1
+        lang_counter.update({message_value: 1})
         logger.info(lang_counter)
 
     if topic == "sentiment-topic":
-        if message_value in sentiment_counter:
-            sentiment_counter[message_value] += 1
-        else:
-            sentiment_counter[message_value] = 1
+        sentiment_counter.update({message_value: 1})
         logger.info(sentiment_counter)
 
     if topic == "ner-topic":
@@ -49,7 +43,7 @@ def basic_consume_loop(consumer, topics):
         consumer.subscribe(topics)
 
         while running:
-            msg = consumer.poll(timeout=1.0)
+            msg = consumer.poll(timeout=0.1)
             if msg is None:
                 continue
 

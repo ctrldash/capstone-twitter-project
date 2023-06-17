@@ -1,5 +1,4 @@
 import sys
-print(sys.path)
 import logging
 from confluent_kafka import Consumer, KafkaException, KafkaError
 from language_analysator import LanguageAnalysator
@@ -15,8 +14,6 @@ logger.addHandler(handler)
 
 def msg_process(msg, analyzer, producer):
     msg_language = analyzer.run(str(msg.value()))
-
-    #logger.info(f"{msg_language}    {str(msg.value())}")
 
     producer.send("languages-topic", msg_language)
 
